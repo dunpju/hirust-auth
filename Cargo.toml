@@ -1,7 +1,10 @@
 [package]
 name = "hirust-auth"
+authors = ["dengpju"]
 version = "0.1.0"
 edition = "2024"
+description = "A Rust Auth"
+license = "MIT"
 
 [dependencies]
 lazy_static = "1.5.0"
