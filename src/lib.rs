@@ -1,0 +1,102 @@
+use std::collections::HashMap;
+use std::sync::Mutex;
+use lazy_static::lazy_static;
+use serde_derive::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Auth {
+    pub tag: String,
+    pub desc: String,
+    pub middlewares: String,
+    pub auth: bool,
+}
+
+lazy_static! {
+    static ref AUTH_COLLECT: Mutex<HashMap<String, Auth>> = Mutex::new(HashMap::new());
+}
+
+pub fn print() {
+    for (tag, auth_info) in AUTH_COLLECT.lock().unwrap().iter() {
+        println!("tag: {}, auth_info: {:?}", tag, auth_info);
+    }
+    println!("print AUTH_COLLECT len: {:?}", AUTH_COLLECT.lock().unwrap().len());
+}
+
+pub fn insert(auth_info: Auth) {
+    AUTH_COLLECT.lock().unwrap().insert(
+        auth_info.tag.clone(),
+        auth_info.clone(),
+    );
+    println!("insert tag: {}, auth_info: {:?}", auth_info.tag.clone(), auth_info.clone());
+}
+
+pub fn get(tag: String) -> Auth {
+    AUTH_COLLECT.lock().unwrap().get(&tag).unwrap().clone()
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Scope {
+    pub handler: String,
+}
+
+lazy_static! {
+    static ref SCOPE_COLLECT: Mutex<Vec<Scope>> = Mutex::new(Vec::new());
+}
+
+pub fn scope_print() {
+    for scope in SCOPE_COLLECT.lock().unwrap().iter() {
+        println!("handler: {:?}", scope.handler);
+    }
+    println!("print SCOPE_COLLECT len: {:?}", SCOPE_COLLECT.lock().unwrap().len());
+}
+
+pub fn scope_insert(scope: Scope) {
+    SCOPE_COLLECT.lock().unwrap().push(scope.clone());
+    println!("insert scope handler: {:?}", scope.handler);
+}
+
+#[macro_export]
+#[allow(unused_macros)]
+macro_rules! unfold {
+    ($scope:expr, $content:expr) => {
+        $scope.configure($content)
+        //$content
+        /*let contents = include_str!("../.././public/scope").to_string();
+
+        println!("contents {}", contents);*/
+
+        // // 将字符串解析为Rust代码片段
+        // let handler_expr = parse_str::<syn::Expr>(contents.as_str()).unwrap();
+        // quote!(#handler_expr;).into();
+    };
+}
+
+#[macro_export]
+#[allow(unused_macros)]
+macro_rules! throw {
+    ($a:expr, $b:expr) => {
+        $b.throw($a)
+    };
+}
+
+#[macro_export]
+#[allow(unused_macros)]
+macro_rules! throw_tips {
+    ($a:expr, $b:expr, $c:expr) => {
+        $b.throw_tips($a, $c)
+    };
+}
+
+// rust怎么获取文件名、行号、函数名 https://zhuanlan.zhihu.com/p/19832648722
+#[macro_export]
+#[allow(unused_macros)]
+macro_rules! func {
+    () => {{
+        fn f() {}
+        fn type_name_of<T>(_: T) -> &'static str {
+            std::any::type_name::<T>()
+        }
+        let name = type_name_of(f);
+        &name[..name.len() - 3]
+    }};
+}
