@@ -1,7 +1,7 @@
-use std::collections::HashMap;
-use std::sync::Mutex;
 use lazy_static::lazy_static;
 use serde_derive::{Deserialize, Serialize};
+use std::collections::HashMap;
+use std::sync::Mutex;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Auth {
@@ -15,44 +15,24 @@ lazy_static! {
     static ref AUTH_COLLECT: Mutex<HashMap<String, Auth>> = Mutex::new(HashMap::new());
 }
 
-pub fn print() {
+type PrintFn = fn(t: &String, a: &Auth);
+
+#[allow(unused)]
+pub fn print(f: PrintFn) {
     for (tag, auth_info) in AUTH_COLLECT.lock().unwrap().iter() {
-        println!("tag: {}, auth_info: {:?}", tag, auth_info);
+        f(tag, auth_info);
     }
-    println!("print AUTH_COLLECT len: {:?}", AUTH_COLLECT.lock().unwrap().len());
 }
 
 pub fn insert(auth_info: Auth) {
-    AUTH_COLLECT.lock().unwrap().insert(
-        auth_info.tag.clone(),
-        auth_info.clone(),
-    );
-    println!("insert tag: {}, auth_info: {:?}", auth_info.tag.clone(), auth_info.clone());
+    AUTH_COLLECT
+        .lock()
+        .unwrap()
+        .insert(auth_info.tag.clone(), auth_info.clone());
 }
 
 pub fn get(tag: String) -> Auth {
     AUTH_COLLECT.lock().unwrap().get(&tag).unwrap().clone()
-}
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct Scope {
-    pub handler: String,
-}
-
-lazy_static! {
-    static ref SCOPE_COLLECT: Mutex<Vec<Scope>> = Mutex::new(Vec::new());
-}
-
-pub fn scope_print() {
-    for scope in SCOPE_COLLECT.lock().unwrap().iter() {
-        println!("handler: {:?}", scope.handler);
-    }
-    println!("print SCOPE_COLLECT len: {:?}", SCOPE_COLLECT.lock().unwrap().len());
-}
-
-pub fn scope_insert(scope: Scope) {
-    SCOPE_COLLECT.lock().unwrap().push(scope.clone());
-    println!("insert scope handler: {:?}", scope.handler);
 }
 
 #[macro_export]
