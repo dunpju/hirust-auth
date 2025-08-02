@@ -24,6 +24,7 @@ pub fn print(f: PrintFn) {
     }
 }
 
+#[allow(unused)]
 pub fn insert(auth_info: Auth) {
     AUTH_COLLECT
         .lock()
@@ -31,8 +32,17 @@ pub fn insert(auth_info: Auth) {
         .insert(auth_info.tag.clone(), auth_info.clone());
 }
 
+#[allow(unused)]
 pub fn get(tag: String) -> Auth {
     AUTH_COLLECT.lock().unwrap().get(&tag).unwrap().clone()
+}
+
+#[allow(unused)]
+pub fn exist(tag: String) -> Option<Auth> {
+    match AUTH_COLLECT.lock().unwrap().get(&tag) {
+        Some(a) => Some(a.clone()),
+        None => None,
+    }
 }
 
 #[macro_export]
