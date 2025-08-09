@@ -1,7 +1,6 @@
-use lazy_static::lazy_static;
 use serde_derive::{Deserialize, Serialize};
 use std::collections::HashMap;
-use std::sync::Mutex;
+use std::sync::{LazyLock, Mutex};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Auth {
@@ -11,9 +10,7 @@ pub struct Auth {
     pub auth: bool,
 }
 
-lazy_static! {
-    static ref AUTH_COLLECT: Mutex<HashMap<String, Auth>> = Mutex::new(HashMap::new());
-}
+static AUTH_COLLECT: LazyLock<Mutex<HashMap<String, Auth>>> = LazyLock::new(|| Mutex::new(HashMap::new()));
 
 type PrintFn = fn(t: &String, a: &Auth);
 
