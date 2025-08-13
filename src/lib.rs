@@ -4,6 +4,7 @@ use std::sync::{LazyLock, Mutex};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Auth {
+    pub path: String,
     pub tag: String,
     pub desc: String,
     pub middlewares: String,
