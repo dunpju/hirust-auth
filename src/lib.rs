@@ -9,10 +9,21 @@ pub struct Auth {
     pub tag: String,
     pub desc: String,
     pub middlewares: String,
-    pub auth: bool,
+    pub auth: String,
 }
 
-static AUTH_COLLECT: LazyLock<Mutex<HashMap<String, Auth>>> = LazyLock::new(|| Mutex::new(HashMap::new()));
+impl Auth {
+    #[allow(dead_code)]
+    pub fn get_auth(&self) -> bool {
+        if self.auth.eq("true") {
+            return true;
+        }
+        return false;
+    }
+}
+
+static AUTH_COLLECT: LazyLock<Mutex<HashMap<String, Auth>>> =
+    LazyLock::new(|| Mutex::new(HashMap::new()));
 
 type PrintFn = fn(t: &String, a: &Auth);
 
