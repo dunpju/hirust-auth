@@ -8,7 +8,7 @@ pub struct Auth {
     pub path: String,
     pub tag: String,
     pub desc: String,
-    pub middlewares: String,
+    pub middleware: String,
     pub auth: String,
 }
 
